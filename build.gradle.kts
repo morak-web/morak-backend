@@ -41,9 +41,7 @@ dependencies {
     // Kotlin Logging (SLF4J 기반 간단 로깅)
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
-    // SLF4J 바인딩 (로그백 등, Spring Boot는 보통 자동)
     implementation("org.slf4j:slf4j-api:2.0.13")
-    implementation("ch.qos.logback:logback-classic:1.4.14")
 
 }
 

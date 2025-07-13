@@ -55,23 +55,36 @@ class GeminiService(
         checkRateLimit()
 
         val prompt = """
-        [역할] 당신은 10년차 UI/UX 디자인 매니저입니다.
-        [목적] 아래 의뢰인의 외주 요청서를 바탕으로, 디자이너가 절대로 재질문을 하지 않도록
-        반드시 받아야 할 *모든* 추가질문을 실무적으로 꼼꼼히 한글로 작성하세요.
+[Role]
+You are a senior UI/UX design manager with 10 years of professional experience.
 
-        [조건]
-        - 실무 기준에서 작업 중 빠질 수 있는 항목(색상, 폰트, 컨셉, 스타일, 인터랙션, 반응형, 예산, 일정, 참고자료, 브랜드규정, 산출물형태, 플랫폼, 정책, 우선순위, '하지 말아야 할 것' 등)을 빠짐없이 체크하세요.
-        - 요구서에 애매하거나 불명확한 부분, 선택지가 필요한 부분, 실제 업무에서 추후 오해가 될 만한 부분은 반드시 구체적으로 질문하세요.
-        - 질문 개수 제한 없이, 누락 없이 *모든* 추가질문을 배열(리스트)로, 한 문장 존댓말로, ["질문1", "질문2", ...] 형식으로만 출력. 불필요한 설명 없이 질문만.
-        - 질문마다 중복, 모호함, 두루뭉술함 없이 실무 핵심만. (최소 10개 이상 권장)
+[Context]
+The following request is for a web/app screen UI/UX design project only.
+Do not consider any other types of design (e.g., graphic, print, video, etc.).
 
-        [의뢰 요청]
-        $userRequirement
+[Objective]
+Based on the client's request below, generate only the truly necessary follow-up questions that a professional UI/UX designer would need to ask before starting work.
+If the client's request is already fully clear and there is nothing to clarify, return an empty array: [].
 
-        [추가질문 리스트]:
-        """.trimIndent()
+[Guidelines]
+- Write all follow-up questions in Korean.
+- Write no more than 5 questions. If fewer are needed, use fewer.
+- Only ask about details truly necessary for web/app UI/UX design (such as color, font, layout, components, branding, features, interactivity, responsiveness, device targets, deliverable format, priorities, things NOT to do, references, style, etc.).
+- Do NOT repeat or paraphrase what the client already wrote; only ask about gaps, ambiguity, or required decisions.
+- NEVER invent questions just to fill space—if everything is clear, output only [].
+- When you ask questions, be concise and professional. Write each as a single polite Korean sentence, and output as a JSON array:
+  ["질문 1", "질문 2", ...]
+- Output only the array. Do not add any explanation, markdown, or extra text.
 
-        val apiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-pro:generateContent?key=$apiKey"
+[Client Request]
+$userRequirement
+
+[Follow-up Questions]:
+""".trimIndent()
+
+
+
+        val apiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=$apiKey"
         val bodyJson = """{
             "contents": [
                 { "parts": [ { "text": ${Json.encodeToString(String.serializer(), prompt)} } ] }

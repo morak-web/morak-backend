@@ -14,3 +14,4 @@ spring:
 gemini:
   api:
     key: ${GEMINI_API_KEY:scrt}
+  limit-request-per-minute: 10

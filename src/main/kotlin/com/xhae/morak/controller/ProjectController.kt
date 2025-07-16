@@ -38,6 +38,12 @@ class ProjectController(
     fun resetAIQuestions(@PathVariable projectId: Long) =
         ResponseEntity.ok(projectService.resetAIQuestions(projectId))
 
+    @PatchMapping("/{projectId}/submit")
+    fun submitProject(@PathVariable projectId: Long) =
+        ResponseEntity.ok(
+            projectService.submitProject(projectId)
+        )
+
     @PostMapping("/{projectId}/feedback")
     fun addFeedback(@PathVariable projectId: Long, @RequestBody req: FeedbackCreateRequest) =
         ResponseEntity.noContent().apply { projectService.addFeedback(projectId, req) }.build<Void>()

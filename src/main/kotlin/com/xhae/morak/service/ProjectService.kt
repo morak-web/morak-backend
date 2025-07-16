@@ -28,6 +28,7 @@ class ProjectService(
                 referenceUrls = request.referenceUrls,
                 expectedScreens = request.expectedScreens,
                 dueDate = request.dueDate,
+                status = "DRAFT",
                 budgetEstimate = request.budgetEstimate
             )
         )
@@ -45,6 +46,14 @@ class ProjectService(
             )
         }
         return ProjectCreateResponse(project.id, project.status)
+    }
+
+    @Transactional
+    fun submitProject(projectId: Long): Map<String, String> {
+        val p = projectRepository.findById(projectId).orElseThrow { NoSuchElementException("Project not found") }
+        p.status = "MATCHING"
+
+        return mapOf("status" to "MATCHING")
     }
 
     fun getProjectDetail(projectId: Long): ProjectDetailDto {

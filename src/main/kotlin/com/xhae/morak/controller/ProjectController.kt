@@ -51,6 +51,54 @@ class ProjectController(
     @GetMapping("/{projectId}/results")
     fun getResultFile(@PathVariable projectId: Long, @RequestParam phase: String) =
         ResponseEntity.ok(projectService.getResultFile(projectId, phase))
+
+
+    // 1. 매칭 대기(지원 가능) 프로젝트 목록
+    @GetMapping("/matching")
+    fun getMatchingProjects(): ResponseEntity<List<ProjectMatchingListItemDto>> =
+        ResponseEntity.ok(projectService.getMatchingProjects())
+
+    // 3. 프로젝트 지원(디자이너 매칭)
+    @PostMapping("/{projectId}/apply")
+    fun applyProject(
+        @PathVariable projectId: Long,
+        @RequestBody req: DesignerApplyRequest // { designerId: Long }
+    ): ResponseEntity<ApplyStatusResponse> =
+        ResponseEntity.ok(projectService.applyToProject(projectId, req.designerId))
+
+    // 4. 내 작업 목록(진행/완료)
+    @GetMapping("/my/design")
+    fun getMyDesignProjects(
+        @RequestParam status: String?,
+        @RequestParam designerId: Long // 인증/세션 대신 쿼리로 예시 (실제 서비스에선 세션/토큰 기반)
+    ): ResponseEntity<List<ProjectListItemDto>> =
+        ResponseEntity.ok(projectService.getMyDesignProjects(designerId, status))
+
+    // 6. 중간/최종 결과물 제출 (이미지/PDF만, multipart/form-data)
+    @PostMapping("/{projectId}/results")
+    fun uploadProjectResult(
+        @PathVariable projectId: Long,
+        @RequestParam phase: String,
+        @RequestParam description: String,
+        @RequestPart file: MultipartFile
+    ): ResponseEntity<ResultUploadResponse> =
+        ResponseEntity.ok(projectService.uploadResult(projectId, phase, description, file))
+
+    // 7. 의뢰인 피드백 확인
+    @GetMapping("/{projectId}/feedback")
+    fun getProjectFeedback(
+        @PathVariable projectId: Long,
+        @RequestParam phase: String
+    ): ResponseEntity<List<FeedbackDto>> =
+        ResponseEntity.ok(feedbackService.getFeedbacksByProjectAndPhase(projectId, phase))
+
+    // 1. AI 피드백 (MID/FINAL)
+    @GetMapping("/{projectId}/ai-feedback")
+    fun getAiFeedback(
+        @PathVariable projectId: Long,
+        @RequestParam phase: String
+    ): ResponseEntity<AIFeedbackResponse> =
+        ResponseEntity.ok(aiService.getAIFeedback(projectId, phase))
 }
 
 @RestController

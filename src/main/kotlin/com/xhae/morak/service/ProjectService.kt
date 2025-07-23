@@ -16,7 +16,9 @@ class ProjectService(
     private val resultRepository: ResultRepository,
     private val feedbackRepository: FeedbackRepository,
     private val paymentRepository: PaymentRepository,
-    private val geminiClient: GeminiService
+    private val geminiClient: GeminiService,
+    private val s3Service: S3Service
+
 ) {
     @Transactional
     fun createProject(request: ProjectCreateRequest): ProjectCreateResponse {
@@ -45,7 +47,7 @@ class ProjectService(
                 )
             )
         }
-        return ProjectCreateResponse(project.id, project.status)
+            return ProjectCreateResponse(project.id, project.status)
     }
 
     @Transactional
@@ -185,4 +187,54 @@ class ProjectService(
         paymentRepository.findAll().map {
             PaymentResponse(it.id, it.project.id, it.amount, it.status, it.createdAt)
         }
+
+    fun getMatchingProjects(): List<ProjectMatchingListItemDto> =
+        projectRepository.findAllByStatus("MATCHING")
+            .map { p -> ProjectMatchingListItemDto.of(p) }
+
+    fun applyToProject(projectId: Long, designerId: Long): ApplyStatusResponse {
+        val project = projectRepository.findById(projectId)
+            .orElseThrow { NoSuchElementException("Project not found") }
+        if (project.designer != null)
+            return ApplyStatusResponse("WORKING")
+        val designer = designerRepository.findById(designerId)
+            .orElseThrow { NoSuchElementException("Designer not found") }
+        project.designer = designer
+        project.status = "WORKING"
+        projectRepository.save(project)
+        return ApplyStatusResponse("WORKING")
+    }
+
+    fun getMyDesignProjects(designerId: Long, status: String?): List<ProjectListItemDto> {
+        val list = projectRepository.findAllByDesignerId(designerId)
+        return list.filter { status == null || it.status == status }
+            .map { ProjectListItemDto.of(it) }
+    }
+
+    fun uploadResult(
+        projectId: Long,
+        phase: String,
+        description: String,
+        file: MultipartFile
+    ): ResultUploadResponse {
+        // 확장자 체크
+        val allowed = setOf("pdf", "jpg", "jpeg", "png", "webp", "svg")
+        val ext = file.originalFilename?.substringAfterLast('.')?.lowercase() ?: ""
+        require(ext in allowed) { "허용되지 않은 파일 형식입니다." }
+        // S3 업로드 (예시)
+        val s3Url = s3Service.upload(file, "project/$projectId/")
+        val project = projectRepository.findById(projectId).orElseThrow()
+        val result = resultRepository.save(
+            Result(
+                project = project,
+                phase = phase.uppercase(),
+                fileUrl = s3Url,
+                uploadedAt = LocalDateTime.now(),
+                description = description
+            )
+        )
+        // AI 피드백 트리거나 분석 요청 필요 시
+        aiService.requestAIFeedback(projectId, phase, s3Url)
+        return ResultUploadResponse(true, result.uploadedAt, s3Url)
+    }
 }

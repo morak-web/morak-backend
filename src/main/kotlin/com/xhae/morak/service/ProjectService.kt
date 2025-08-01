@@ -6,6 +6,7 @@ import com.xhae.morak.dto.*
 import com.xhae.morak.repository.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 
 @Service
@@ -17,7 +18,8 @@ class ProjectService(
     private val feedbackRepository: FeedbackRepository,
     private val paymentRepository: PaymentRepository,
     private val geminiClient: GeminiService,
-    private val s3Service: S3Service
+    private val s3Service: S3Service,
+    private val aiService: AIService,
 
 ) {
     @Transactional
@@ -190,7 +192,7 @@ class ProjectService(
 
     fun getMatchingProjects(): List<ProjectMatchingListItemDto> =
         projectRepository.findAllByStatus("MATCHING")
-            .map { p -> ProjectMatchingListItemDto.of(p) }
+            .map { p : Project-> ProjectMatchingListItemDto.of(p) }
 
     fun applyToProject(projectId: Long, designerId: Long): ApplyStatusResponse {
         val project = projectRepository.findById(projectId)
@@ -207,8 +209,9 @@ class ProjectService(
 
     fun getMyDesignProjects(designerId: Long, status: String?): List<ProjectListItemDto> {
         val list = projectRepository.findAllByDesignerId(designerId)
-        return list.filter { status == null || it.status == status }
-            .map { ProjectListItemDto.of(it) }
+        return list.filter {
+            p: Project -> status == null || p.status == status }
+            .map {p: Project ->  ProjectListItemDto.of(p) }
     }
 
     fun uploadResult(

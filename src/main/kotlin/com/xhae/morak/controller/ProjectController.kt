@@ -1,14 +1,19 @@
 package com.xhae.morak.controller
 
 import com.xhae.morak.dto.*
+import com.xhae.morak.service.AIService
+import com.xhae.morak.service.FeedbackService
 import com.xhae.morak.service.ProjectService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/projects")
 class ProjectController(
-    private val projectService: ProjectService
+    private val projectService: ProjectService,
+    private val aiService: AIService,
+    private val feedbackService: FeedbackService
 ) {
     @PostMapping
     fun createProject(@RequestBody req: ProjectCreateRequest) =
@@ -51,6 +56,8 @@ class ProjectController(
     @GetMapping("/{projectId}/results")
     fun getResultFile(@PathVariable projectId: Long, @RequestParam phase: String) =
         ResponseEntity.ok(projectService.getResultFile(projectId, phase))
+
+
 
 
     // 1. 매칭 대기(지원 가능) 프로젝트 목록

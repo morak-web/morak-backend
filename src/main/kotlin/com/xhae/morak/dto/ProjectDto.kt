@@ -1,5 +1,6 @@
 package com.xhae.morak.dto
 
+import com.xhae.morak.entity.Project
 import java.time.LocalDateTime
 
 data class ProjectCreateRequest(
@@ -22,7 +23,17 @@ data class ProjectListItemDto(
     val title: String?,
     val status: String,
     val createdAt: LocalDateTime
-)
+) {
+    companion object {
+        fun of(entity: Project) = ProjectListItemDto(
+            projectId = entity.id,
+            title = entity.title,
+            status = entity.status,
+            createdAt = entity.createdAt
+        )
+    }
+}
+
 
 data class DesignerDto(
     val designerId: Long,

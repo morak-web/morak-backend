@@ -19,5 +19,5 @@ data class Project(
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @ManyToOne(fetch = FetchType.LAZY)
-    val designer: Designer? = null
+    var designer: Designer? = null
 )

@@ -4,3 +4,7 @@ import com.xhae.morak.entity.Project
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface ProjectRepository : JpaRepository<Project, Long>
+{
+    fun findAllByDesignerId(designerId: Long): List<Project>
+    fun findAllByStatus(status: String): List<Project>
+}

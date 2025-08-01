@@ -1,6 +1,7 @@
 package com.xhae.morak.service
 
 import com.xhae.morak.dto.AIFeedbackResponse
+import com.xhae.morak.repository.AIFeedbackRepository
 import org.springframework.stereotype.Service
 
 

@@ -43,6 +43,10 @@ dependencies {
 
     implementation("org.slf4j:slf4j-api:2.0.13")
 
+    implementation("software.amazon.awssdk:s3:2.25.27")        // 버전은 최신/안정화된 것으로
+    implementation("software.amazon.awssdk:auth:2.25.27")
+    implementation("software.amazon.awssdk:regions:2.25.27")
+
 }
 
 kotlin {

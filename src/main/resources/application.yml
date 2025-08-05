@@ -15,3 +15,14 @@ gemini:
   api:
     key: ${GEMINI_API_KEY:scrt}
   limit-request-per-minute: 10
+
+
+cloud:
+  aws:
+    region:
+      static: ${AWS_REGION:empty}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID:empty}
+      secret-key: ${AWS_SECRET_ACCESS_KEY:empty}
+    s3:
+      bucket: ${AWS_S3_BUCKET:empty}

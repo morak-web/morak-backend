@@ -30,7 +30,7 @@ class S3Uploader(
         .build()
 
     fun upload(file: MultipartFile): String {
-        val fileName = "profile/${UUID.randomUUID()}-${file.originalFilename}"
+        val fileName = "morak/${UUID.randomUUID()}-${file.originalFilename}"
         val tempFile = kotlin.io.path.createTempFile().toFile().apply {
             file.transferTo(this)
         }
@@ -44,7 +44,7 @@ class S3Uploader(
         return try {
             log.info { "event=s3_upload_start fileName=$fileName size=${file.size} contentType=${file.contentType}" }
             s3Client.putObject(putObjectRequest, Paths.get(tempFile.toURI()))
-            val fileUrl = "https://d1iimlpplvq3em.cloudfront.net/$fileName"
+            val fileUrl = "https://$bucket.s3.$region.amazonaws.com/$fileName"
             log.info { "event=s3_upload_complete fileName=$fileName url=$fileUrl" }
             fileUrl
         } catch (e: S3Exception) {

@@ -26,7 +26,7 @@ class PortfolioService(
         val allowed = setOf("pdf", "jpg", "jpeg", "png", "webp", "svg")
         val ext = file.originalFilename?.substringAfterLast('.')?.lowercase() ?: ""
         require(ext in allowed) { "허용되지 않은 파일 형식입니다." }
-        val s3Url = s3Service.upload(file, "portfolio/$designerId/")
+        val s3Url = s3Service.upload(file)
         val designer = designerRepository.findById(designerId).orElseThrow()
         val portfolio = portfolioRepository.save(
             Portfolio(
@@ -62,7 +62,7 @@ class PortfolioService(
             val allowed = setOf("pdf", "jpg", "jpeg", "png", "webp", "svg")
             val ext = file.originalFilename?.substringAfterLast('.')?.lowercase() ?: ""
             require(ext in allowed) { "허용되지 않은 파일 형식입니다." }
-            portfolio.fileUrl = s3Service.upload(file, "portfolio/$designerId/")
+            portfolio.fileUrl = s3Service.upload(file)
         }
         portfolioRepository.save(portfolio)
         return PortfolioDto.of(portfolio)

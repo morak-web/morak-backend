@@ -225,7 +225,7 @@ class ProjectService(
         val ext = file.originalFilename?.substringAfterLast('.')?.lowercase() ?: ""
         require(ext in allowed) { "허용되지 않은 파일 형식입니다." }
         // S3 업로드 (예시)
-        val s3Url = s3Service.upload(file, "project/$projectId/")
+        val s3Url = s3Service.upload(file)
         val project = projectRepository.findById(projectId).orElseThrow()
         val result = resultRepository.save(
             Result(

@@ -50,6 +50,6 @@ jobs:
           ssh -v morak 'echo "SSH connection good"'
 
       - name: Restart Spring Boot on EC2
-        run: |
-          ssh morak 'pkill -f "java -jar" || true'
-          ssh morak 'nohup java -jar /home/ubuntu/app.jar > app.log 2>&1 &'
+        run: |          
+          ssh morak 'pgrep -f "java -jar" && pkill -f "java -jar" || echo "No process to kill"'
+          ssh morak 'nohup java -jar /home/ubuntu/app.jar --spring.profiles.active=prod > app.log 2>&1 &'

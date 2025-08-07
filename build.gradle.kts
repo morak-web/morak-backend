@@ -27,6 +27,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    runtimeOnly("com.mysql:mysql-connector-j")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -46,6 +47,8 @@ dependencies {
     implementation("software.amazon.awssdk:s3:2.25.27")        // 버전은 최신/안정화된 것으로
     implementation("software.amazon.awssdk:auth:2.25.27")
     implementation("software.amazon.awssdk:regions:2.25.27")
+
+    implementation("io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:3.0.2")
 
 }
 

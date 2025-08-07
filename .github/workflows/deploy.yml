@@ -1,0 +1,47 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Spring Boot App to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: Add SSH key
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > ~/.ssh/morak.pem
+          chmod 600 ~/.ssh/morak.pem
+
+      - name: Add SSH config
+        run: |
+          echo "Host morak" >> ~/.ssh/config
+          echo "  HostName ${{ secrets.EC2_HOST }}" >> ~/.ssh/config
+          echo "  User ${{ secrets.EC2_USER }}" >> ~/.ssh/config
+          echo "  IdentityFile ~/.ssh/morak.pem" >> ~/.ssh/config
+          echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+      - name: Deploy jar to EC2
+        run: |
+          scp build/libs/*.jar morak:/home/ubuntu/app.jar
+
+      - name: Restart Spring Boot on EC2
+        run: |
+          ssh morak 'pkill -f "java -jar" || true'
+          ssh morak 'nohup java -jar /home/ubuntu/app.jar > app.log 2>&1 &'

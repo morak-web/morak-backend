@@ -22,6 +22,7 @@ repositories {
     mavenCentral()
 }
 
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -48,7 +49,7 @@ dependencies {
     implementation("software.amazon.awssdk:auth:2.25.27")
     implementation("software.amazon.awssdk:regions:2.25.27")
 
-    implementation("io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:3.0.2")
+    implementation("io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.4")
 
 }
 

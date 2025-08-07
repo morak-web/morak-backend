@@ -49,9 +49,14 @@ jobs:
         run: |
           ssh -v morak 'echo "SSH connection good"'
 
+
+      - name: Kill old Spring Boot
+        run: |
+          ssh morak 'if pgrep -f "java -jar" >/dev/null; then pkill -f "java -jar"; else echo "No process to kill"; fi' || true
+    
+
       - name: Restart Spring Boot on EC2
         run: |          
-          ssh morak 'pgrep -f "java -jar" && pkill -f "java -jar" || echo "No process to kill"'
           ssh morak 'nohup java -jar /home/ubuntu/app.jar --spring.profiles.active=prod > app.log 2>&1 &'
 
 

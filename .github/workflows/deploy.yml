@@ -53,3 +53,10 @@ jobs:
         run: |          
           ssh morak 'pgrep -f "java -jar" && pkill -f "java -jar" || echo "No process to kill"'
           ssh morak 'nohup java -jar /home/ubuntu/app.jar --spring.profiles.active=prod > app.log 2>&1 &'
+
+
+      - name: Debug SSH Key
+        run: |
+          ls -l ~/.ssh
+          cat ~/.ssh/config
+          ssh -v morak 'echo hello'

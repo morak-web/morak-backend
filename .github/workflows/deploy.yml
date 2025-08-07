@@ -45,6 +45,10 @@ jobs:
         run: |
           scp build/libs/*.jar morak:/home/ubuntu/app.jar
 
+      - name: Debug SSH connection
+        run: |
+          ssh -v morak 'echo "SSH connection good"'
+
       - name: Restart Spring Boot on EC2
         run: |
           ssh morak 'pkill -f "java -jar" || true'

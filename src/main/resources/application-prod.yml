@@ -9,4 +9,4 @@ spring:
       ddl-auto: update
     show-sql: false
   config:
-    import: "aws-secretsmanager:/morak-secret"
+    import: "aws-secretsmanager:morak-secret"
